@@ -13,6 +13,8 @@ import java.util.concurrent.ExecutionException;
 import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 import org.dubh.easynews.slurptv.State.EpisodeState.Step;
 import org.dubh.slurptv.easynews.FindDownloadFileTask;
+import org.dubh.slurptv.frontend.Frontend;
+import org.dubh.slurptv.frontend.FrontendModule;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
@@ -40,8 +42,10 @@ public class Main {
   	Injector injector = Guice.createInjector(
   			new CommandLineArgsModule(args),
   			new ConfigurationModule(),
-  			new TasksModule());
+  			new TasksModule(),
+  			new FrontendModule());
   	injector.getInstance(Main.class).go();
+  	injector.getInstance(Frontend.class).start();
   }
   
   @BindingAnnotation

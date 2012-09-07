@@ -17,5 +17,6 @@
   <modules>
     <module>slurptv-all</module>
     <module>slurptv-main</module>
+    <module>slurptv-frontend</module>
   </modules>
 </project>

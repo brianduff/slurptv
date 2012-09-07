@@ -17,9 +17,14 @@
       <version>1.0</version>
     </dependency>
     <dependency>
+      <groupId>org.dubh.slurptv</groupId>
+      <artifactId>slurptv-frontend</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
-      <version>2.0</version>
+      <version>3.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.inject.extensions</groupId>
