@@ -24,7 +24,7 @@ import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.servlet.GuiceFilter;
 
-public class Frontend extends AbstractIdleService {
+class Frontend extends AbstractIdleService {
 	private final int port;
 	private final GuiceFilter guiceFilter;
 	

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.inject.Singleton;
 
 @Singleton
-public class StatusServlet extends HttpServlet {
+class StatusServlet extends HttpServlet {
 	@Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
