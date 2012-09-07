@@ -1,0 +1,76 @@
+option java_package = "org.dubh.easynews.slurptv";
+option java_outer_classname = "SlurpTv";
+
+import "org/dubh/slurptv/data.proto";
+
+message Credentials {
+	required string username = 1;
+	required string password = 2;
+}
+
+message FileConfiguration {
+    // Minimum file download size in bytes.
+	optional int64 min_size_bytes = 1 [default = 100000000 ];
+	// Maximum file download size in bytes.
+	optional int64 max_size_bytes = 2 [default = 4000000000 ];
+	// Allowed file extensions.
+	repeated string file_type = 3;
+	// Preferred file extension.
+	optional string preferred_type = 4 [default = "mkv"];
+}
+
+// Global configuration.
+message Configuration {
+	// Shows to download.
+	repeated Show show = 1;
+	// The credentials for logging into easynews.
+	required Credentials easynews_credentials = 2;
+	// Where to put stuff downloaded from easynews.
+	required string download_dir = 3;
+	// Where to put stuff while processing.
+	required string temp_dir = 4;
+	// Where to copy stuff to make it appear in iTunes.
+	required string itunes_auto_dir = 5;
+	// A directory in which to save state.
+	required string settings_dir = 6;
+	// The maximum number of days to look back for missing non-seasonal
+	// shows
+	optional int32 max_days = 7 [default = 30];
+	// The maximum number of times to retry a failing episode.
+	optional int32 max_retries = 8 [default = 20];
+	optional FileConfiguration file_configuration = 9;
+	// The directory in which to store tvdb files.
+	required string tvdb_dir = 10;
+	// How long to cache stuff for tvdb (in hours).
+	optional int32 tvdb_cache = 11 [default = 24];
+	// Directory for in-flight mp4 files.
+	required string mp4_dir = 12;
+	// Directory for artwork
+	required string art_dir = 13;
+	// Maximum number of concurrent episodes to process.
+	optional int32 max_concurrent_episodes = 14 [default = 4];
+	// How often to wait between executions (in minutes).
+	optional int64 time_between_executions = 15 [default = 120];
+	// Port for the frontend.
+	optional int32 frontend_port = 16 [default = 8123];
+}
+
+// A show.
+message Show {
+	required string id = 1;
+	required string name = 2;
+	optional FileConfiguration file_configuration = 3;
+	// Whether the show is seasonal. False = date based.
+	optional bool seasonal = 6 [default = true];
+	// The oldest season to download, assuming this show is seasonal.
+	optional int32 oldest_season = 7;
+	// The oldest date to download, assuming this show is date based.
+	optional EpisodeDate oldest_date = 8;
+	// The maximum number of episodes per season.
+	optional int32 max_episodes_per_season = 9 [default = 30];
+	// The maximum season. Set this to the current season for best efficiency
+	optional int32 max_season = 10 [default = 1];
+	// The identifier of this show on www.thetvdb.com
+	optional int32 tvdb_id = 11;
+	optional bool paused = 12;
+}

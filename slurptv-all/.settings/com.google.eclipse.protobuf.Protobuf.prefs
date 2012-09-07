@@ -1,0 +1,6 @@
+compiler.enableProjectSettings=true
+compiler.protocFilePath=/usr/local/bin/protoc
+eclipse.preferences.version=1
+paths.directoryPaths=${workspace_loc\:/slurptv/slurptv-all/src/main/proto}
+paths.filesInMultipleDirectories=true
+paths.filesInOneDirectoryOnly=false

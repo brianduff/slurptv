@@ -1,0 +1,29 @@
+option java_package = "org.dubh.easynews.slurptv";
+
+message EpisodeDate {
+	optional int32 year = 1;
+	optional int32 month = 2;
+	optional int32 date = 3;
+}
+
+message Episode {
+	// If the show is seasonal, the season of the show.
+	optional int32 season = 1;
+	// If the show uses episode numbers, the episode number.
+	optional int32 episode = 2;
+	// If the show is date-based, the date of the episode.
+	optional EpisodeDate date = 3;
+}
+
+// Details about an episode of a show.
+message EpisodeDetails {
+	optional Episode episode = 1;
+	optional string show_name = 3;
+	optional string episode_name = 4;
+	optional string description = 5;
+	optional string genre = 6;
+	optional string network = 7;
+	optional string air_date = 8;
+	optional string artwork_url = 9;
+	optional int64 air_date_millis = 10;
+}
