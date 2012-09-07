@@ -5,18 +5,17 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.util.concurrent.ExecutionException;
+import java.util.Set;
+import java.util.logging.Logger;
 
-import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 import org.dubh.easynews.slurptv.State.EpisodeState.Step;
 import org.dubh.slurptv.easynews.FindDownloadFileTask;
-import org.dubh.slurptv.frontend.Frontend;
 import org.dubh.slurptv.frontend.FrontendModule;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.Service;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Guice;
@@ -25,17 +24,20 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 public class Main {
-  private final Configuration configuration;
-  private final TaskExecutor taskExecutor;
+	private static final Logger log = Logger.getLogger(Main.class.getName());
+  private final Set<Service> services;
   
   @Inject
-  Main(Configuration configuration, TaskExecutor taskExecutor) {
-    this.configuration = configuration;
-    this.taskExecutor = taskExecutor;
+  Main(Set<Service> services) {
+    this.services = services;
   }
   
-  public void go() throws IOException, InterruptedException, ExecutionException {
-  	taskExecutor.run(configuration.getShowList());
+  public void go() throws Exception {
+  	for (Service service : services) {
+  		log.info("Starting service " + service);
+  		service.startAndWait();
+  		log.info("Started service " + service);
+  	}
   }
 
   public static void main(String[] args) throws Exception {
@@ -43,9 +45,9 @@ public class Main {
   			new CommandLineArgsModule(args),
   			new ConfigurationModule(),
   			new TasksModule(),
-  			new FrontendModule());
+  			new FrontendModule(),
+  			new TaskExecutorModule());
   	injector.getInstance(Main.class).go();
-  	injector.getInstance(Frontend.class).start();
   }
   
   @BindingAnnotation
