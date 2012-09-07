@@ -16,5 +16,6 @@
   <inceptionYear>2012</inceptionYear>
   <modules>
     <module>slurptv-all</module>
+    <module>slurptv-main</module>
   </modules>
 </project>
