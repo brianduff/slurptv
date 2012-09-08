@@ -113,13 +113,9 @@ public class StateManager {
         return builder.setEpisode(episode).build();
       }
       log.log(episodeLog.info(show, episode, "Loading state from " + episodeFile));
-      Reader r = null;
-      try {
-        r = Files.newReader(episodeFile, Charsets.UTF_8);
+      try (Reader r = Files.newReader(episodeFile, Charsets.UTF_8)) {
         TextFormat.merge(r, builder);
-        return builder.build();
-      } finally {
-        Closeables.closeQuietly(r);
+        return builder.build();        
       }
     }
   }
@@ -130,12 +126,8 @@ public class StateManager {
     File episodeFile = getEpisodeFile(show, episodeState.getEpisode());
     stateDir.mkdirs();
     synchronized (episodeFile.getPath().intern()) {
-      Writer w = null;
-      try {
-        w = Files.newWriter(episodeFile, Charsets.UTF_8);
-        TextFormat.print(episodeState, w);
-      } finally {
-        Closeables.closeQuietly(w);
+      try (Writer w = Files.newWriter(episodeFile, Charsets.UTF_8)) {
+        TextFormat.print(episodeState, w);        
       }
     }
   }
