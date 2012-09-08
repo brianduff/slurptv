@@ -10,25 +10,25 @@ import com.google.inject.Inject;
 
 class Downloader {
   private static final Logger log = Logger.getLogger(DownloadVideoTask.class.getName());
-  private final CommandExecutor executor;
+  private final CommandExecutorFactory executor;
 
   @Inject
   Downloader(CommandExecutorFactory executorFactory) {
-    this.executor = executorFactory.newExecutor("download");
+    this.executor = executorFactory;
   }
 
   public void download(Credentials credentials, String url, File destinationFile)
       throws IOException, InterruptedException {
     log.info("Downloading " + url);
     destinationFile.getParentFile().mkdirs();
-    executor.execute(new String[] { "curl", "--basic", "--user",
+    executor.newExecutor("download").execute(new String[] { "curl", "--basic", "--user",
         credentials.getUsername() + ":" + credentials.getPassword(), url, "--output",
         destinationFile.getPath() }, destinationFile.getName());
   }
 
   public void download(String url, File destinationFile) throws IOException, InterruptedException {
     destinationFile.getParentFile().mkdirs();
-    executor.execute(new String[] { "curl", url, "--output", destinationFile.getPath() },
+    executor.newExecutor("download").execute(new String[] { "curl", url, "--output", destinationFile.getPath() },
         destinationFile.getName());
   }
 }

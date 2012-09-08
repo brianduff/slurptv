@@ -2,20 +2,20 @@ package org.dubh.slurptv;
 
 import java.io.File;
 
-import org.dubh.slurptv.ConfigurationModule.ConfiguredDirectory;
-import org.dubh.slurptv.ConfigurationModule.Directory;
+import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 class CommandExecutorFactory {
-  private final File tempDir;
+  private final Provider<Configuration> configuration;
 
   @Inject
-  CommandExecutorFactory(@ConfiguredDirectory(Directory.TEMP) File tempDir) {
-    this.tempDir = tempDir;
+  CommandExecutorFactory(Provider<Configuration> configuration) {
+    this.configuration = configuration;
   }
 
   public CommandExecutor newExecutor(String taskName) {
-    return new CommandExecutor(tempDir, taskName);
+    return new CommandExecutor(new File(configuration.get().getTempDir()), taskName);
   }
 }

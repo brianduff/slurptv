@@ -30,6 +30,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * Provides access to data from the TV database.
@@ -37,18 +38,20 @@ import com.google.inject.Inject;
  * @author brianduff
  */
 class TVDatabase {
-  private final Configuration configuration;
+  private final Provider<Configuration> configuration;
   private final Downloader downloader;
   private final LoadingCache<Integer, ImmutableSet<EpisodeDetails>> cache;
   private static final Logger log = Logger.getLogger(TVDatabase.class.getName());
 
   @Inject
-  TVDatabase(Configuration configuration, Downloader downloader) {
+  TVDatabase(Provider<Configuration> configuration, Downloader downloader) {
     this.configuration = configuration;
     this.downloader = downloader;
+    
+    // TODO(bduff) if configuration changes, reload cache to update the expiration.
 
     cache = CacheBuilder.newBuilder()
-        .expireAfterWrite(configuration.getTvdbCache(), TimeUnit.HOURS)
+        .expireAfterWrite(configuration.get().getTvdbCache(), TimeUnit.HOURS)
         .build(new CacheLoader<Integer, ImmutableSet<EpisodeDetails>>() {
           @Override
           public ImmutableSet<EpisodeDetails> load(Integer id) throws Exception {
@@ -86,10 +89,10 @@ class TVDatabase {
     log.info("Looking up TVDatabase information for show id " + id);
 
     // Try to load from filesystem (in case the process was restarted)
-    File dbFile = new File(configuration.getTvdbDir(), id + ".zip");
+    File dbFile = new File(configuration.get().getTvdbDir(), id + ".zip");
     if (dbFile.isFile()
         && dbFile.lastModified() > System.currentTimeMillis()
-            - TimeUnit.HOURS.toMillis(configuration.getTvdbCache())) {
+            - TimeUnit.HOURS.toMillis(configuration.get().getTvdbCache())) {
       log.info("Reloading from file " + dbFile);
       return loadFromFile(dbFile);
     }

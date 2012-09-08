@@ -5,45 +5,30 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 import org.dubh.easynews.slurptv.SlurpTv.Credentials;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
+import com.google.common.util.concurrent.Service;
 import com.google.inject.AbstractModule;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.protobuf.TextFormat;
+import com.google.inject.multibindings.Multibinder;
 
 public class ConfigurationModule extends AbstractModule {
   @Override
   public void configure() {
+    Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class);
+    serviceBinder.addBinding().to(ConfigurationFileWatcher.class);
   }
 
   @Provides
-  @Singleton
-  Configuration provideConfiguration(@ConfigurationFile File configurationFile) {
-    try {
-      Configuration.Builder configBuilder = Configuration.newBuilder();
-      BufferedReader br = null;
-      try {
-        br = new BufferedReader(new FileReader(configurationFile));
-        TextFormat.merge(br, configBuilder);
-      } finally {
-        Closeables.closeQuietly(br);
-      }
-      return configBuilder.build();
-    } catch (IOException e) {
-      throw Throwables.propagate(e);
-    }
+  Configuration provideConfiguration(ConfigurationManager configManager) {
+    return configManager.getConfiguration();
   }
 
   @Provides

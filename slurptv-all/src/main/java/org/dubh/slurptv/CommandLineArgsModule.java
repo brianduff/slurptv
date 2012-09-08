@@ -33,7 +33,7 @@ class CommandLineArgsModule extends AbstractModule {
   String[] provideCommandLineArgs() {
     return args;
   }
-
+  
   @Provides
   @Singleton
   @ConfigurationFile

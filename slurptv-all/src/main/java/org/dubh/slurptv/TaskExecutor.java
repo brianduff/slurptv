@@ -18,31 +18,32 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 class TaskExecutor extends AbstractScheduledService {
   private static final Logger log = Logger.getLogger(TaskExecutor.class.getName());
   private final ImmutableMap<Step, ? extends AbstractTask> tasks;
   private final StateManager stateManager;
-  private final Configuration configuration;
+  private final Provider<Configuration> configuration;
   private final EpisodeLog episodeLog;
   private final ListeningExecutorService executor;
 
   @Inject
   TaskExecutor(ImmutableMap<Step, AbstractTask> tasks, StateManager stateManager,
-      Configuration configuration, EpisodeLog episodeLog) {
+      Provider<Configuration> configuration, EpisodeLog episodeLog) {
     this.tasks = tasks;
     this.stateManager = stateManager;
     this.configuration = configuration;
     this.episodeLog = episodeLog;
 
     this.executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(configuration
-        .getMaxConcurrentEpisodes()));
+        .get().getMaxConcurrentEpisodes()));
   }
 
   @Override
   protected void runOneIteration() throws Exception {
     List<ListenableFuture<Void>> futures = Lists.newArrayList();
-    for (Show show : configuration.getShowList()) {
+    for (Show show : configuration.get().getShowList()) {
       if (show.getPaused()) {
         continue;
       }
@@ -59,7 +60,7 @@ class TaskExecutor extends AbstractScheduledService {
 
   @Override
   protected Scheduler scheduler() {
-    return Scheduler.newFixedRateSchedule(0, configuration.getTimeBetweenExecutions(),
+    return Scheduler.newFixedRateSchedule(0, configuration.get().getTimeBetweenExecutions(),
         TimeUnit.MINUTES);
   }
 }

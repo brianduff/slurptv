@@ -15,8 +15,6 @@ import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 import org.dubh.easynews.slurptv.SlurpTv.Show;
 import org.dubh.easynews.slurptv.State.EpisodeState;
 import org.dubh.easynews.slurptv.State.EpisodeState.Step;
-import org.dubh.slurptv.ConfigurationModule.ConfiguredDirectory;
-import org.dubh.slurptv.ConfigurationModule.Directory;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Charsets;
@@ -26,9 +24,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
-import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.protobuf.TextFormat;
 
@@ -38,16 +36,13 @@ import com.google.protobuf.TextFormat;
 @Singleton
 public class StateManager {
   private static final Logger log = Logger.getLogger(StateManager.class.getName());
-  private final File stateDir;
   private final EpisodeFormatter episodeFormatter;
-  private final Configuration configuration;
+  private final Provider<Configuration> configuration;
   private final LoadingCache<CacheKey, EpisodeState> cache;
   private final EpisodeLog episodeLog;
 
   @Inject
-  StateManager(@ConfiguredDirectory(Directory.SETTINGS) File stateDir,
-      EpisodeFormatter episodeFormatter, Configuration configuration, EpisodeLog episodeLog) {
-    this.stateDir = stateDir;
+  StateManager(EpisodeFormatter episodeFormatter, Provider<Configuration> configuration, EpisodeLog episodeLog) {
     this.episodeFormatter = episodeFormatter;
     this.configuration = configuration;
     this.episodeLog = episodeLog;
@@ -87,7 +82,7 @@ public class StateManager {
   }
 
   private File getEpisodeFile(Show show, Episode episode) {
-    return new File(stateDir, show.getId() + "-" + episodeFormatter.format(episode) + ".config");
+    return new File(configuration.get().getSettingsDir(), show.getId() + "-" + episodeFormatter.format(episode) + ".config");
   }
 
   public EpisodeState readState(Show show, Episode episode) throws IOException {
@@ -124,7 +119,7 @@ public class StateManager {
     log.log(episodeLog.info(show, episodeState.getEpisode(), "Writing state"));
     cache.put(new CacheKey(show, episodeState.getEpisode()), episodeState);
     File episodeFile = getEpisodeFile(show, episodeState.getEpisode());
-    stateDir.mkdirs();
+    new File(configuration.get().getSettingsDir()).mkdirs();
     synchronized (episodeFile.getPath().intern()) {
       try (Writer w = Files.newWriter(episodeFile, Charsets.UTF_8)) {
         TextFormat.print(episodeState, w);        
@@ -148,7 +143,7 @@ public class StateManager {
         }
       }
     } else {
-      DateTime oldestDate = new DateTime().minusDays(configuration.getMaxDays());
+      DateTime oldestDate = new DateTime().minusDays(configuration.get().getMaxDays());
       if (show.hasOldestDate()) {
         DateTime showOldestDate = new DateTime(show.getOldestDate().getYear(), show.getOldestDate()
             .getMonth(), show.getOldestDate().getDate(), 0, 0, 0, 0);
@@ -189,7 +184,7 @@ public class StateManager {
     }
     // If we have a failed state, see if it's ok to retry.
     else if (state.hasFailedStep()) {
-      if (state.getRetryCount() < configuration.getMaxRetries()) {
+      if (state.getRetryCount() < configuration.get().getMaxRetries()) {
         missingEpisodes.add(episode);
       }
     }

@@ -12,6 +12,7 @@ import org.dubh.easynews.slurptv.State.EpisodeState.Step;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Provider;
 
 public class ProcessEpisodeCallable implements Callable<Void> {
   private static final Logger log = Logger.getLogger(ProcessEpisodeCallable.class.getName());
@@ -20,10 +21,10 @@ public class ProcessEpisodeCallable implements Callable<Void> {
   private final Show show;
   private final Episode episode;
   private final ImmutableMap<Step, ? extends AbstractTask> tasks;
-  private final Configuration configuration;
+  private final Provider<Configuration> configuration;
 
   ProcessEpisodeCallable(StateManager stateManager, EpisodeLog episodeLog,
-      ImmutableMap<Step, ? extends AbstractTask> tasks, Configuration configuration, Show show,
+      ImmutableMap<Step, ? extends AbstractTask> tasks, Provider<Configuration> configuration, Show show,
       Episode episode) {
     this.stateManager = stateManager;
     this.episodeLog = episodeLog;
@@ -35,7 +36,7 @@ public class ProcessEpisodeCallable implements Callable<Void> {
 
   public Void call() throws IOException {
     EpisodeState episodeState = stateManager.readState(show, episode);
-    if (episodeState.getRetryCount() > configuration.getMaxRetries()) {
+    if (episodeState.getRetryCount() > configuration.get().getMaxRetries()) {
       log.log(episodeLog.info(show, episode, "Skipping because retry count was exceeded"));
       return null;
     }

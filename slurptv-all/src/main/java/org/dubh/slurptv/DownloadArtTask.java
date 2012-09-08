@@ -10,6 +10,7 @@ import org.dubh.easynews.slurptv.State.EpisodeState;
 import org.dubh.easynews.slurptv.State.EpisodeState.Step;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * Downloads artwork for an episode.
@@ -17,15 +18,15 @@ import com.google.inject.Inject;
  * @author brianduff
  */
 class DownloadArtTask extends AbstractTask {
-  private final File artDir;
+  private final Provider<Configuration> configuration;
   private final Downloader downloader;
   private final TVDatabase tvDatabase;
   private final EpisodeFormatter formatter;
 
   @Inject
-  DownloadArtTask(Configuration configuration, Downloader downloader, TVDatabase tvDatabase,
+  DownloadArtTask(Provider<Configuration> configuration, Downloader downloader, TVDatabase tvDatabase,
       EpisodeFormatter formatter) {
-    this.artDir = new File(configuration.getArtDir());
+    this.configuration = configuration;
     this.downloader = downloader;
     this.tvDatabase = tvDatabase;
     this.formatter = formatter;
@@ -49,10 +50,10 @@ class DownloadArtTask extends AbstractTask {
       }
       int lastDot = details.getArtworkUrl().lastIndexOf('.');
       String artExt = details.getArtworkUrl().substring(lastDot);
-      File artFile = new File(artDir, show.getId() + "-art-"
+      File artFile = new File(configuration.get().getArtDir(), show.getId() + "-art-"
           + formatter.format(previousState.getEpisode()) + "-" + previousState.getRetryCount()
           + artExt);
-      artDir.mkdirs();
+      new File(configuration.get().getArtDir()).mkdirs();
       downloader.download(details.getArtworkUrl(), artFile);
       return EpisodeState.newBuilder(previousState).setLastCompletedStep(Step.DOWNLOADING_ART)
           .setArtFile(artFile.getPath()).build();

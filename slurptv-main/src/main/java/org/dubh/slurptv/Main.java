@@ -46,7 +46,8 @@ public class Main {
   			new ConfigurationModule(),
   			new TasksModule(),
   			new FrontendModule(),
-  			new TaskExecutorModule());
+  			new TaskExecutorModule(),
+  			new EventBusModule());
   	injector.getInstance(Main.class).go();
   }
   

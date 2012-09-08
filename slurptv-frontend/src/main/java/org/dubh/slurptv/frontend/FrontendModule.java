@@ -18,6 +18,7 @@ public class FrontendModule extends AbstractModule {
       @Override
       protected void configureTemplates() {
         serve("/shows").withDataModel(ShowsModelProvider.class).usingTemplate("shows.ftl");
+        serve("/show/*").withDataModel(ShowModelProvider.class).usingTemplate("show.ftl");
       }
     });
     Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class);

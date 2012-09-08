@@ -10,12 +10,13 @@ import org.dubh.easynews.slurptv.State.EpisodeState.Step;
 
 import com.google.common.io.Files;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 class CopyToITunesTask extends AbstractTask {
-  private final Configuration configuration;
+  private final Provider<Configuration> configuration;
 
   @Inject
-  CopyToITunesTask(Configuration configuration) {
+  CopyToITunesTask(Provider<Configuration> configuration) {
     this.configuration = configuration;
   }
 
@@ -23,7 +24,7 @@ class CopyToITunesTask extends AbstractTask {
   public EpisodeState perform(Show show, EpisodeState previousState) throws TaskFailedException,
       InterruptedException {
     File originalFile = new File(previousState.getConvertedFile());
-    File itunesFile = new File(configuration.getItunesAutoDir(), originalFile.getName());
+    File itunesFile = new File(configuration.get().getItunesAutoDir(), originalFile.getName());
     // Should we use move?
     try {
       Files.copy(originalFile, itunesFile);
