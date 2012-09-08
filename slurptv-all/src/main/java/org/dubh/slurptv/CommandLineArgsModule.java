@@ -17,36 +17,37 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
 class CommandLineArgsModule extends AbstractModule {
-	private final String[] args;
-	
-	CommandLineArgsModule(String[] args) {
-		this.args = args;
-	}
-	
-	@Override
+  private final String[] args;
+
+  CommandLineArgsModule(String[] args) {
+    this.args = args;
+  }
+
+  @Override
   protected void configure() {
   }
-	
-	@Provides
-	@Singleton
-	@CommandLineArgs
-	String[] provideCommandLineArgs() {
-		return args;
-	}
-	
-	@Provides
-	@Singleton
-	@ConfigurationFile
-	File provideConfigurationFile(@CommandLineArgs String[] args) {
-  	File configFile = new File(System.getProperty("user.home"), "slurptv.conf");
-  	if (args.length > 0) {
-  		configFile = new File(args[0]);
-  	}
-  	return configFile;
-	}
-	
+
+  @Provides
+  @Singleton
+  @CommandLineArgs
+  String[] provideCommandLineArgs() {
+    return args;
+  }
+
+  @Provides
+  @Singleton
+  @ConfigurationFile
+  File provideConfigurationFile(@CommandLineArgs String[] args) {
+    File configFile = new File(System.getProperty("user.home"), "slurptv.conf");
+    if (args.length > 0) {
+      configFile = new File(args[0]);
+    }
+    return configFile;
+  }
+
   @BindingAnnotation
-  @Target({FIELD, PARAMETER, METHOD})
+  @Target({ FIELD, PARAMETER, METHOD })
   @Retention(RUNTIME)
-  @interface CommandLineArgs {}
+  @interface CommandLineArgs {
+  }
 }

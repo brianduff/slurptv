@@ -28,108 +28,113 @@ import freemarker.template.Template;
  * @author brianduff
  */
 public abstract class FreemarkerConfigurationModule extends AbstractModule {
-	private final Collection<ServeContext> serveContexts = Sets.newHashSet();
-	
-	@Provides
-	@Singleton
-	Configuration provideConfiguration() {
-		Configuration cfg = new Configuration();
-		cfg.setClassForTemplateLoading(FreemarkerConfigurationModule.class, "");
-		cfg.setObjectWrapper(new DefaultObjectWrapper());
-		return cfg;
-	}
-	
-	@Provides
-	@Singleton
-	Collection<ServeContext> provideServeContexts() {
-		return serveContexts;
-	}
-	
-	ServeContext serve(String pattern) {
-		return new ServeContext(pattern);
-	}
-	
-	protected final class ServeContext {
-		private final String pattern;
-		private String template;
-		private Key<? extends ModelProvider> modelKey;
-		
-		private ServeContext(String pattern) {
-			this.pattern = pattern;
-			serveContexts.add(this);
-		}
-		
-		ServeContext usingTemplate(String template) {
-			this.template = template;
-			return this;
-		}
-		
-		ServeContext withDataModel(Class<? extends ModelProvider> modelProvider) {
-			this.modelKey = Key.get(modelProvider);
-			return this;
-		}
-	}
+  private final Collection<ServeContext> serveContexts = Sets.newHashSet();
 
-	@Override
-  protected final void configure() {
-		configureTemplates();
-		install(new ServletModule() {
-			@Override
-			public void configureServlets() {
-  			for (ServeContext context : serveContexts) {
-  				serve(context.pattern).with(TemplateServlet.class);
-  			}			
-			}
-		});
+  @Provides
+  @Singleton
+  Configuration provideConfiguration() {
+    Configuration cfg = new Configuration();
+    cfg.setClassForTemplateLoading(FreemarkerConfigurationModule.class, "");
+    cfg.setObjectWrapper(new DefaultObjectWrapper());
+    return cfg;
   }
-	
-	protected abstract void configureTemplates();
 
-	@Provides
-	@RequestScoped
-	@Nullable
-	private ServeContext provideServeContext(HttpServletRequest request) {
-		return findContext(request.getPathInfo());
-	}
-	
-	@Provides
-	@RequestScoped
-	private ModelProvider provideModelProvider(@Nullable ServeContext context, Injector injector) {
-		if (context == null) {
-			return new ModelProvider() {
-				@Override
+  @Provides
+  @Singleton
+  Collection<ServeContext> provideServeContexts() {
+    return serveContexts;
+  }
+
+  ServeContext serve(String pattern) {
+    return new ServeContext(pattern);
+  }
+
+  protected final class ServeContext {
+    private final String pattern;
+    private String template;
+    private Key<? extends ModelProvider> modelKey;
+
+    private ServeContext(String pattern) {
+      this.pattern = pattern;
+      serveContexts.add(this);
+    }
+
+    ServeContext usingTemplate(String template) {
+      this.template = template;
+      return this;
+    }
+
+    ServeContext withDataModel(Class<? extends ModelProvider> modelProvider) {
+      this.modelKey = Key.get(modelProvider);
+      return this;
+    }
+  }
+
+  @Override
+  protected final void configure() {
+    configureTemplates();
+    install(new ServletModule() {
+      @Override
+      public void configureServlets() {
+        for (ServeContext context : serveContexts) {
+          serve(context.pattern).with(TemplateServlet.class);
+        }
+      }
+    });
+  }
+
+  protected abstract void configureTemplates();
+
+  @Provides
+  @RequestScoped
+  @Nullable
+  private ServeContext provideServeContext(HttpServletRequest request) {
+    return findContext(request.getPathInfo());
+  }
+
+  @Provides
+  @RequestScoped
+  private ModelProvider provideModelProvider(@Nullable ServeContext context,
+      Injector injector) {
+    if (context == null) {
+      return new ModelProvider() {
+        @Override
         public Map<Object, Object> provideModel(String path,
             Map<String, String[]> parameters) throws Exception {
-					return ImmutableMap.of();
+          return ImmutableMap.of();
         }
-			};
-		}
-		return injector.getInstance(context.modelKey);
-	}
-	
-	@Provides
-	@RequestScoped
-	@Nullable
-	private Template provideTemplate(Configuration configuration, @Nullable ServeContext context) {
-		if (context == null) {
-			// TODO(bduff): handle no template.
-			return null;
-		}
-		try {
-	    return configuration.getTemplate(context.template);
-    } catch (IOException e) {
-    	throw Throwables.propagate(e);
+      };
     }
-	}
-	
-	private @Nullable ServeContext findContext(String pathInfo) {
-		for (ServeContext context : serveContexts) {
-			if (context.pattern.endsWith("*") && pathInfo.startsWith(context.pattern.substring(0, context.pattern.length() - 1))) {
-				return context;
-			} else if (context.pattern.equals(pathInfo)) {
-				return context;
-			}
-		}
-		return null;
-	}
+    return injector.getInstance(context.modelKey);
+  }
+
+  @Provides
+  @RequestScoped
+  @Nullable
+  private Template provideTemplate(Configuration configuration,
+      @Nullable ServeContext context) {
+    if (context == null) {
+      // TODO(bduff): handle no template.
+      return null;
+    }
+    try {
+      return configuration.getTemplate(context.template);
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
+
+  private @Nullable
+  ServeContext findContext(String pathInfo) {
+    for (ServeContext context : serveContexts) {
+      if (context.pattern.endsWith("*")
+          && pathInfo.startsWith(context.pattern.substring(0,
+              context.pattern.length() - 1))) {
+        return context;
+      } else if (context.pattern.equals(pathInfo)) {
+        return context;
+      }
+    }
+    return null;
+  }
 }

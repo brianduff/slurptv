@@ -8,15 +8,17 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 
 class ShowsModelProvider implements ModelProvider {
-	private final Configuration configuration;
-	
-	@Inject
-	ShowsModelProvider(Configuration configuration) {
-		this.configuration = configuration;
-	}
-	
-	@Override
-  public Map<Object, Object> provideModel(String path, Map<String, String[]> parameters) throws Exception {
-		return ImmutableMap.<Object, Object>of("shows", configuration.getShowList());
+  private final Configuration configuration;
+
+  @Inject
+  ShowsModelProvider(Configuration configuration) {
+    this.configuration = configuration;
+  }
+
+  @Override
+  public Map<Object, Object> provideModel(String path,
+      Map<String, String[]> parameters) throws Exception {
+    return ImmutableMap.<Object, Object> of("shows",
+        configuration.getShowList());
   }
 }

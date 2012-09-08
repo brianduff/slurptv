@@ -24,75 +24,76 @@ import com.google.inject.Singleton;
 import com.google.protobuf.TextFormat;
 
 public class ConfigurationModule extends AbstractModule {
-	@Override
-	public void configure() {}
-	
-	@Provides
-	@Singleton
-	Configuration provideConfiguration(@ConfigurationFile File configurationFile) {
-		try {
-    	Configuration.Builder configBuilder = Configuration.newBuilder();
-    	BufferedReader br = null;
-    	try {
-    		br = new BufferedReader(new FileReader(configurationFile));
-    		TextFormat.merge(br, configBuilder);
-    	} finally {
-    		Closeables.closeQuietly(br);
-    	}
-    	return configBuilder.build();
-		} catch (IOException e) {
-			throw Throwables.propagate(e);
-		}
-	}
-	
-	@Provides
-	@Singleton
-	@Easynews
-	Credentials provideEasynewsCredentials(Configuration configuration) {
-		return configuration.getEasynewsCredentials();
-	}
-	
-	@Provides
-	@Singleton
-	@ConfiguredDirectory(Directory.TEMP)
-	File provideTempDir(Configuration configuration) {
-		return new File(configuration.getTempDir());
-	}
-	
-	@Provides
-	@Singleton
-	@ConfiguredDirectory(Directory.DOWNLOAD)
-	File provideDownloadDir(Configuration configuration) {
-		return new File(configuration.getDownloadDir());
-	}
-	
-	@Provides
-	@Singleton
-	@ConfiguredDirectory(Directory.SETTINGS)
-	File provideSettingsDir(Configuration configuration) {
-		return new File(configuration.getSettingsDir());
-	}
-	
-	enum Directory {
-		TEMP,
-		DOWNLOAD,
-		SETTINGS
-	}
-	
-  @BindingAnnotation
-  @Target({FIELD, PARAMETER, METHOD})
-  @Retention(RUNTIME)
-  @interface ConfiguredDirectory {
-  	Directory value();
+  @Override
+  public void configure() {
+  }
+
+  @Provides
+  @Singleton
+  Configuration provideConfiguration(@ConfigurationFile File configurationFile) {
+    try {
+      Configuration.Builder configBuilder = Configuration.newBuilder();
+      BufferedReader br = null;
+      try {
+        br = new BufferedReader(new FileReader(configurationFile));
+        TextFormat.merge(br, configBuilder);
+      } finally {
+        Closeables.closeQuietly(br);
+      }
+      return configBuilder.build();
+    } catch (IOException e) {
+      throw Throwables.propagate(e);
+    }
+  }
+
+  @Provides
+  @Singleton
+  @Easynews
+  Credentials provideEasynewsCredentials(Configuration configuration) {
+    return configuration.getEasynewsCredentials();
+  }
+
+  @Provides
+  @Singleton
+  @ConfiguredDirectory(Directory.TEMP)
+  File provideTempDir(Configuration configuration) {
+    return new File(configuration.getTempDir());
+  }
+
+  @Provides
+  @Singleton
+  @ConfiguredDirectory(Directory.DOWNLOAD)
+  File provideDownloadDir(Configuration configuration) {
+    return new File(configuration.getDownloadDir());
+  }
+
+  @Provides
+  @Singleton
+  @ConfiguredDirectory(Directory.SETTINGS)
+  File provideSettingsDir(Configuration configuration) {
+    return new File(configuration.getSettingsDir());
+  }
+
+  enum Directory {
+    TEMP, DOWNLOAD, SETTINGS
   }
 
   @BindingAnnotation
-  @Target({FIELD, PARAMETER, METHOD})
+  @Target({ FIELD, PARAMETER, METHOD })
   @Retention(RUNTIME)
-  @interface ConfigurationFile {}
-  
+  @interface ConfiguredDirectory {
+    Directory value();
+  }
+
   @BindingAnnotation
-  @Target({FIELD, PARAMETER, METHOD})
+  @Target({ FIELD, PARAMETER, METHOD })
   @Retention(RUNTIME)
-  public @interface Easynews {}
+  @interface ConfigurationFile {
+  }
+
+  @BindingAnnotation
+  @Target({ FIELD, PARAMETER, METHOD })
+  @Retention(RUNTIME)
+  public @interface Easynews {
+  }
 }

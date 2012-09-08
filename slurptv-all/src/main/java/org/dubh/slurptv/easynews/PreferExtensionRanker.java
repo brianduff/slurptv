@@ -2,7 +2,7 @@ package org.dubh.slurptv.easynews;
 
 public class PreferExtensionRanker implements ResultRanker {
   private String extension;
-  
+
   public PreferExtensionRanker(String extension) {
     this.extension = extension;
   }

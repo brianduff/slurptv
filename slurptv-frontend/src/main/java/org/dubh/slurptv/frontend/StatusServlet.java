@@ -11,10 +11,10 @@ import com.google.inject.Singleton;
 
 @Singleton
 class StatusServlet extends HttpServlet {
-	@Override
+  @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
-		resp.getWriter().println("OK");
-		resp.getWriter().close();
+    resp.getWriter().println("OK");
+    resp.getWriter().close();
   }
 }

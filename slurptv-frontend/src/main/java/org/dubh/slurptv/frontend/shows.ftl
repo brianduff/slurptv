@@ -1,6 +1,8 @@
 <html>
-  <p>Shows:</p>
-  <#list shows as show>
-  	<p>${show.name}</p>
-  </#list>
+  <h1>Shows</h1>
+  <ul>
+    <#list shows as show>
+      <li>${show.name}
+    </#list>
+  </ul>
 </html>

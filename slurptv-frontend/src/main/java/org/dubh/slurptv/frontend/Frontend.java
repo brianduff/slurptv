@@ -25,44 +25,44 @@ import com.google.inject.Inject;
 import com.google.inject.servlet.GuiceFilter;
 
 class Frontend extends AbstractIdleService {
-	private final int port;
-	private final GuiceFilter guiceFilter;
-	
-	private Server server;
-	
-	@Inject
-	Frontend(@FrontendPort int port, GuiceFilter guiceFilter) {
-		this.port = port;
-		this.guiceFilter = guiceFilter;
-	}
+  private final int port;
+  private final GuiceFilter guiceFilter;
+
+  private Server server;
+
+  @Inject
+  Frontend(@FrontendPort int port, GuiceFilter guiceFilter) {
+    this.port = port;
+    this.guiceFilter = guiceFilter;
+  }
 
   @BindingAnnotation
-  @Target({FIELD, PARAMETER, METHOD})
+  @Target({ FIELD, PARAMETER, METHOD })
   @Retention(RUNTIME)
   @interface FrontendPort {
   }
 
-	@Override
+  @Override
   protected void startUp() throws Exception {
-		Server server = new Server(port);
-		ServletContextHandler handler = new ServletContextHandler();
-		handler.setContextPath("/");
-		// Needed to make jetty happy.
-		handler.addServlet(new ServletHolder(new HttpServlet() {
-			@Override
-			protected void service(HttpServletRequest req, HttpServletResponse resp) {
-				resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			}
-		}), "/*");
-		server.setHandler(handler);
-		FilterHolder holder = new FilterHolder(guiceFilter);
-		handler.addFilter(holder, "/*", EnumSet.allOf(DispatcherType.class));
-		server.start();
-		this.server = server;
+    Server server = new Server(port);
+    ServletContextHandler handler = new ServletContextHandler();
+    handler.setContextPath("/");
+    // Needed to make jetty happy.
+    handler.addServlet(new ServletHolder(new HttpServlet() {
+      @Override
+      protected void service(HttpServletRequest req, HttpServletResponse resp) {
+        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      }
+    }), "/*");
+    server.setHandler(handler);
+    FilterHolder holder = new FilterHolder(guiceFilter);
+    handler.addFilter(holder, "/*", EnumSet.allOf(DispatcherType.class));
+    server.start();
+    this.server = server;
   }
 
-	@Override
+  @Override
   protected void shutDown() throws Exception {
-		server.stop();
+    server.stop();
   }
 }

@@ -7,9 +7,9 @@ package org.dubh.slurptv.easynews;
  */
 public class FileSizeRanker implements ResultRanker {
 
-	@Override
+  @Override
   public long scoreResult(Result result) {
-		return result.getSizeInBytes() / 1000;
+    return result.getSizeInBytes() / 1000;
   }
 
 }

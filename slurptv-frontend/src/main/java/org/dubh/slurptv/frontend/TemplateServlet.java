@@ -19,30 +19,33 @@ import freemarker.template.Template;
  */
 @Singleton
 class TemplateServlet extends HttpServlet {
-	private final Provider<ModelProvider> modelProvider;
-	private final @Nullable Provider<Template> template;
-	
-	@Inject
-	TemplateServlet(Provider<ModelProvider> modelProvider, @Nullable Provider<Template> template) {
-		this.modelProvider = modelProvider;
-		this.template = template;
-	}
-	
-	@Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
-		if (template == null) {
-			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-			return;
-		}
-		resp.setContentType("text/html");
-		try {
-			template.get().process(modelProvider.get().provideModel(req.getPathInfo(), req.getParameterMap()), resp.getWriter());
-		} catch (Exception e) {
-			throw new IOException(e);
-		} finally {
-			resp.getWriter().close();
-		}
+  private final Provider<ModelProvider> modelProvider;
+  private final @Nullable
+  Provider<Template> template;
+
+  @Inject
+  TemplateServlet(Provider<ModelProvider> modelProvider,
+      @Nullable Provider<Template> template) {
+    this.modelProvider = modelProvider;
+    this.template = template;
   }
 
+  @Override
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException {
+    if (template == null) {
+      resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+    resp.setContentType("text/html");
+    try {
+      template.get().process(
+          modelProvider.get().provideModel(req.getPathInfo(),
+              req.getParameterMap()), resp.getWriter());
+    } catch (Exception e) {
+      throw new IOException(e);
+    } finally {
+      resp.getWriter().close();
+    }
+  }
 }

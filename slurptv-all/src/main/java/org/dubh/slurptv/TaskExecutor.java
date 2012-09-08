@@ -20,47 +20,48 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
 
 class TaskExecutor extends AbstractScheduledService {
-	private static final Logger log = Logger.getLogger(TaskExecutor.class.getName());
-	private final ImmutableMap<Step, ? extends AbstractTask> tasks;
-	private final StateManager stateManager;
-	private final Configuration configuration;
-	private final EpisodeLog episodeLog;
-	private final ListeningExecutorService executor;
-	
-	@Inject
-	TaskExecutor(ImmutableMap<Step, AbstractTask> tasks, 
-			StateManager stateManager, 
-			Configuration configuration,
-			EpisodeLog episodeLog) {
-		this.tasks = tasks;
-		this.stateManager = stateManager;
-		this.configuration = configuration;
-		this.episodeLog = episodeLog;
-		
-		this.executor = MoreExecutors.listeningDecorator(
-				Executors.newFixedThreadPool(configuration.getMaxConcurrentEpisodes()));
-	}
+  private static final Logger log = Logger.getLogger(TaskExecutor.class
+      .getName());
+  private final ImmutableMap<Step, ? extends AbstractTask> tasks;
+  private final StateManager stateManager;
+  private final Configuration configuration;
+  private final EpisodeLog episodeLog;
+  private final ListeningExecutorService executor;
 
-	@Override
-  protected void runOneIteration() throws Exception {
-		List<ListenableFuture<Void>> futures = Lists.newArrayList();
-		for (Show show : configuration.getShowList()) {
-			if (show.getPaused()) {
-				continue;
-			}
-  		for (Episode episode : stateManager.getMissingEpisodes(show)) {
-  			futures.add(executor.submit(new ProcessEpisodeCallable(stateManager, episodeLog, 
-  					tasks, configuration, show, episode)));
-  		}
-		}
-		
-		ListenableFuture<List<Void>> allTasks = Futures.allAsList(futures);
-		log.info("Waiting for " + futures.size() + "tasks...");
-		allTasks.get();
+  @Inject
+  TaskExecutor(ImmutableMap<Step, AbstractTask> tasks,
+      StateManager stateManager, Configuration configuration,
+      EpisodeLog episodeLog) {
+    this.tasks = tasks;
+    this.stateManager = stateManager;
+    this.configuration = configuration;
+    this.episodeLog = episodeLog;
+
+    this.executor = MoreExecutors.listeningDecorator(Executors
+        .newFixedThreadPool(configuration.getMaxConcurrentEpisodes()));
   }
 
-	@Override
+  @Override
+  protected void runOneIteration() throws Exception {
+    List<ListenableFuture<Void>> futures = Lists.newArrayList();
+    for (Show show : configuration.getShowList()) {
+      if (show.getPaused()) {
+        continue;
+      }
+      for (Episode episode : stateManager.getMissingEpisodes(show)) {
+        futures.add(executor.submit(new ProcessEpisodeCallable(stateManager,
+            episodeLog, tasks, configuration, show, episode)));
+      }
+    }
+
+    ListenableFuture<List<Void>> allTasks = Futures.allAsList(futures);
+    log.info("Waiting for " + futures.size() + "tasks...");
+    allTasks.get();
+  }
+
+  @Override
   protected Scheduler scheduler() {
-		return Scheduler.newFixedRateSchedule(0, configuration.getTimeBetweenExecutions(), TimeUnit.MINUTES);
+    return Scheduler.newFixedRateSchedule(0,
+        configuration.getTimeBetweenExecutions(), TimeUnit.MINUTES);
   }
 }

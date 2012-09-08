@@ -10,30 +10,32 @@ import com.google.inject.servlet.GuiceFilter;
 import com.google.inject.servlet.ServletModule;
 
 public class FrontendModule extends AbstractModule {
-	@Override
+  @Override
   protected void configure() {
-		bind(GuiceFilter.class);
-		install(new Servlets());
-		install(new FreemarkerConfigurationModule() {
-			@Override
+    bind(GuiceFilter.class);
+    install(new Servlets());
+    install(new FreemarkerConfigurationModule() {
+      @Override
       protected void configureTemplates() {
-				serve("/shows").withDataModel(ShowsModelProvider.class).usingTemplate("shows.ftl");
+        serve("/shows").withDataModel(ShowsModelProvider.class).usingTemplate(
+            "shows.ftl");
       }
-		});
-		Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class);
-		serviceBinder.addBinding().to(Frontend.class);
+    });
+    Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(),
+        Service.class);
+    serviceBinder.addBinding().to(Frontend.class);
   }
-		
-	@Provides
-	@Frontend.FrontendPort
-	int provideFrontendPort(Configuration config) {
-		return config.getFrontendPort();
-	}
-	
-	private static class Servlets extends ServletModule {
-		@Override
+
+  @Provides
+  @Frontend.FrontendPort
+  int provideFrontendPort(Configuration config) {
+    return config.getFrontendPort();
+  }
+
+  private static class Servlets extends ServletModule {
+    @Override
     protected void configureServlets() {
-			serve("/statusz").with(StatusServlet.class);
+      serve("/statusz").with(StatusServlet.class);
     }
-	}
+  }
 }

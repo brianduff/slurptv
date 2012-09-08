@@ -5,9 +5,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 
 public class TaskExecutorModule extends AbstractModule {
-	@Override
+  @Override
   protected void configure() {
-		Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class);
-		serviceBinder.addBinding().to(TaskExecutor.class);
+    Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(),
+        Service.class);
+    serviceBinder.addBinding().to(TaskExecutor.class);
   }
 }

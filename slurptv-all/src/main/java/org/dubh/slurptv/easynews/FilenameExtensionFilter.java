@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableSet;
 
 public class FilenameExtensionFilter implements ResultFilter {
   private final ImmutableSet<String> extensions;
-  
+
   public FilenameExtensionFilter(Collection<String> extensions) {
     this.extensions = ImmutableSet.copyOf(extensions);
   }
