@@ -140,18 +140,18 @@ public class StateManager {
 	}
 	
 	/**
-	 * Gets episodes that are missing.
+	 * Gets candidate episodes for a show. Candidates are any episodes which are selected
+	 * by current configuration options.
 	 */
-	public Collection<Episode> getMissingEpisodes(Show show) throws IOException {
-		Set<Episode> missingEpisodes = Sets.newLinkedHashSet();
+	public Collection<Episode> getCandidateEpisodes(Show show) throws IOException {
+		Set<Episode> candidates = Sets.newLinkedHashSet();
 		if (show.getSeasonal()) {
 			int firstSeason = show.getOldestSeason();
 			int lastSeason = show.getMaxSeason();
 			
 			for (int season = firstSeason; season <= lastSeason; season++) {
 				for (int episodeNum = 1; episodeNum <= show.getMaxEpisodesPerSeason(); episodeNum++) {
-					Episode episode = Episode.newBuilder().setSeason(season).setEpisode(episodeNum).build();
-					addIfMissing(show, missingEpisodes, episode);
+					candidates.add(Episode.newBuilder().setSeason(season).setEpisode(episodeNum).build());
 				}
 			}
 		} else {
@@ -166,11 +166,21 @@ public class StateManager {
 			
 			DateTime current = oldestDate;
 			while (current.isBeforeNow()) {
-				Episode episode = Episode.newBuilder().setDate(EpisodeDate.newBuilder()
-						.setDate(current.getDayOfMonth()).setMonth(current.getMonthOfYear()).setYear(current.getYear())).build();
-				addIfMissing(show, missingEpisodes, episode);
+				candidates.add(Episode.newBuilder().setDate(EpisodeDate.newBuilder()
+						.setDate(current.getDayOfMonth()).setMonth(current.getMonthOfYear()).setYear(current.getYear())).build());
 				current = current.plusDays(1);
 			}
+		}
+		return candidates;
+	}
+	
+	/**
+	 * Gets episodes that are missing.
+	 */
+	public Collection<Episode> getMissingEpisodes(Show show) throws IOException {
+		Set<Episode> missingEpisodes = Sets.newLinkedHashSet();
+		for (Episode candidate : getCandidateEpisodes(show)) {
+			addIfMissing(show, missingEpisodes, candidate);
 		}
 		return missingEpisodes;
 	}

@@ -26,9 +26,7 @@ message EpisodeState {
 	optional string failed_reason = 9;
 	optional int32 retry_count = 10;
 	optional string art_file = 12;
+	optional int64 last_attempt = 13;
+
 }
 
-message ShowState {
-	optional string id = 1;
-	repeated EpisodeState episode_state = 2;
-}

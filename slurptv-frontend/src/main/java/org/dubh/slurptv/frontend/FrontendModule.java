@@ -14,6 +14,12 @@ public class FrontendModule extends AbstractModule {
   protected void configure() {
 		bind(GuiceFilter.class);
 		install(new Servlets());
+		install(new FreemarkerConfigurationModule() {
+			@Override
+      protected void configureTemplates() {
+				serve("/shows").withDataModel(ShowsModelProvider.class).usingTemplate("shows.ftl");
+      }
+		});
 		Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class);
 		serviceBinder.addBinding().to(Frontend.class);
   }

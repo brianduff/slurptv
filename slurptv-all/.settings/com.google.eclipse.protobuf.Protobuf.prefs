@@ -1,4 +1,6 @@
+compiler.compileProtoFiles=true
 compiler.enableProjectSettings=true
+compiler.javaOutputDirectory=target/generated-sources/protoc
 compiler.protocFilePath=/usr/local/bin/protoc
 eclipse.preferences.version=1
 paths.directoryPaths=${workspace_loc\:/slurptv/slurptv-all/src/main/proto}

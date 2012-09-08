@@ -9,6 +9,7 @@ import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 import org.dubh.easynews.slurptv.SlurpTv.Show;
 import org.dubh.easynews.slurptv.State.EpisodeState;
 import org.dubh.easynews.slurptv.State.EpisodeState.Step;
+import org.joda.time.DateTime;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -72,6 +73,7 @@ public class ProcessEpisodeCallable implements Callable<Void> {
 			return EpisodeState.newBuilder(newState)
 					.clearFailedReason()
 					.clearFailedStep()
+					.setLastAttempt(new DateTime().getMillis())
 					.build();
 		} catch (Throwable t) {
 			log.log(episodeLog.severe(show, episode, "Failed step due to exception " + nextStep, t));
@@ -79,6 +81,7 @@ public class ProcessEpisodeCallable implements Callable<Void> {
 					.setFailedStep(nextStep)
 					.setFailedReason(t.getMessage())
 					.setRetryCount(oldState.getRetryCount() + 1)
+					.setLastAttempt(new DateTime().getMillis())
 					.build();
 		}
 		
