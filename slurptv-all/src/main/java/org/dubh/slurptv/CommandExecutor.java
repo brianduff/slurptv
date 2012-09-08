@@ -20,13 +20,12 @@ public final class CommandExecutor {
     this.name = name;
   }
 
-  public void execute(Collection<String> command, String label)
-      throws IOException, InterruptedException {
+  public void execute(Collection<String> command, String label) throws IOException,
+      InterruptedException {
     execute(command.toArray(new String[command.size()]), label);
   }
 
-  public void execute(String[] command, String label) throws IOException,
-      InterruptedException {
+  public void execute(String[] command, String label) throws IOException, InterruptedException {
     logDir.mkdirs();
     Process process = Runtime.getRuntime().exec(command);
     File outLog = new File(logDir, name + "." + label + "_out.log");

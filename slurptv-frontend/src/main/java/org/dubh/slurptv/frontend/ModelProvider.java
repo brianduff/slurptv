@@ -8,6 +8,5 @@ import java.util.Map;
  * @author brianduff
  */
 interface ModelProvider {
-  Map<Object, Object> provideModel(String path, Map<String, String[]> parameters)
-      throws Exception;
+  Map<Object, Object> provideModel(String path, Map<String, String[]> parameters) throws Exception;
 }

@@ -20,8 +20,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
 
 class TaskExecutor extends AbstractScheduledService {
-  private static final Logger log = Logger.getLogger(TaskExecutor.class
-      .getName());
+  private static final Logger log = Logger.getLogger(TaskExecutor.class.getName());
   private final ImmutableMap<Step, ? extends AbstractTask> tasks;
   private final StateManager stateManager;
   private final Configuration configuration;
@@ -29,16 +28,15 @@ class TaskExecutor extends AbstractScheduledService {
   private final ListeningExecutorService executor;
 
   @Inject
-  TaskExecutor(ImmutableMap<Step, AbstractTask> tasks,
-      StateManager stateManager, Configuration configuration,
-      EpisodeLog episodeLog) {
+  TaskExecutor(ImmutableMap<Step, AbstractTask> tasks, StateManager stateManager,
+      Configuration configuration, EpisodeLog episodeLog) {
     this.tasks = tasks;
     this.stateManager = stateManager;
     this.configuration = configuration;
     this.episodeLog = episodeLog;
 
-    this.executor = MoreExecutors.listeningDecorator(Executors
-        .newFixedThreadPool(configuration.getMaxConcurrentEpisodes()));
+    this.executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(configuration
+        .getMaxConcurrentEpisodes()));
   }
 
   @Override
@@ -49,8 +47,8 @@ class TaskExecutor extends AbstractScheduledService {
         continue;
       }
       for (Episode episode : stateManager.getMissingEpisodes(show)) {
-        futures.add(executor.submit(new ProcessEpisodeCallable(stateManager,
-            episodeLog, tasks, configuration, show, episode)));
+        futures.add(executor.submit(new ProcessEpisodeCallable(stateManager, episodeLog, tasks,
+            configuration, show, episode)));
       }
     }
 
@@ -61,7 +59,7 @@ class TaskExecutor extends AbstractScheduledService {
 
   @Override
   protected Scheduler scheduler() {
-    return Scheduler.newFixedRateSchedule(0,
-        configuration.getTimeBetweenExecutions(), TimeUnit.MINUTES);
+    return Scheduler.newFixedRateSchedule(0, configuration.getTimeBetweenExecutions(),
+        TimeUnit.MINUTES);
   }
 }

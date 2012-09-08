@@ -24,15 +24,14 @@ class TemplateServlet extends HttpServlet {
   Provider<Template> template;
 
   @Inject
-  TemplateServlet(Provider<ModelProvider> modelProvider,
-      @Nullable Provider<Template> template) {
+  TemplateServlet(Provider<ModelProvider> modelProvider, @Nullable Provider<Template> template) {
     this.modelProvider = modelProvider;
     this.template = template;
   }
 
   @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+      IOException {
     if (template == null) {
       resp.sendError(HttpServletResponse.SC_NOT_FOUND);
       return;
@@ -40,8 +39,8 @@ class TemplateServlet extends HttpServlet {
     resp.setContentType("text/html");
     try {
       template.get().process(
-          modelProvider.get().provideModel(req.getPathInfo(),
-              req.getParameterMap()), resp.getWriter());
+          modelProvider.get().provideModel(req.getPathInfo(), req.getParameterMap()),
+          resp.getWriter());
     } catch (Exception e) {
       throw new IOException(e);
     } finally {

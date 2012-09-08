@@ -16,9 +16,8 @@ class ShowsModelProvider implements ModelProvider {
   }
 
   @Override
-  public Map<Object, Object> provideModel(String path,
-      Map<String, String[]> parameters) throws Exception {
-    return ImmutableMap.<Object, Object> of("shows",
-        configuration.getShowList());
+  public Map<Object, Object> provideModel(String path, Map<String, String[]> parameters)
+      throws Exception {
+    return ImmutableMap.<Object, Object> of("shows", configuration.getShowList());
   }
 }

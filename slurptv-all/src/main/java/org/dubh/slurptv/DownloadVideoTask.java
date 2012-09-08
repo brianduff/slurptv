@@ -24,8 +24,7 @@ public class DownloadVideoTask extends AbstractTask {
 
   @Inject
   DownloadVideoTask(@Easynews Credentials credentials, Downloader downloader,
-      @ConfiguredDirectory(Directory.DOWNLOAD) File downloadDir,
-      EpisodeFormatter episodeFormatter) {
+      @ConfiguredDirectory(Directory.DOWNLOAD) File downloadDir, EpisodeFormatter episodeFormatter) {
     this.credentials = credentials;
     this.downloader = downloader;
     this.downloadDir = downloadDir;
@@ -33,17 +32,15 @@ public class DownloadVideoTask extends AbstractTask {
   }
 
   @Override
-  public EpisodeState perform(Show show, EpisodeState previousState)
-      throws TaskFailedException {
+  public EpisodeState perform(Show show, EpisodeState previousState) throws TaskFailedException {
     downloadDir.mkdirs();
     File destinationFile = new File(downloadDir, show.getId() + "-"
-        + episodeFormatter.format(previousState.getEpisode()) + "-"
-        + previousState.getRetryCount() + fileExtension(previousState.getUrl()));
+        + episodeFormatter.format(previousState.getEpisode()) + "-" + previousState.getRetryCount()
+        + fileExtension(previousState.getUrl()));
 
     try {
       downloader.download(credentials, previousState.getUrl(), destinationFile);
-      return EpisodeState.newBuilder(previousState)
-          .setLastCompletedStep(Step.DOWNLOADING)
+      return EpisodeState.newBuilder(previousState).setLastCompletedStep(Step.DOWNLOADING)
           .setDownloadFile(destinationFile.getPath()).build();
     } catch (InterruptedException e) {
       throw new TaskFailedException(e);

@@ -40,8 +40,7 @@ class TVDatabase {
   private final Configuration configuration;
   private final Downloader downloader;
   private final LoadingCache<Integer, ImmutableSet<EpisodeDetails>> cache;
-  private static final Logger log = Logger
-      .getLogger(TVDatabase.class.getName());
+  private static final Logger log = Logger.getLogger(TVDatabase.class.getName());
 
   @Inject
   TVDatabase(Configuration configuration, Downloader downloader) {
@@ -58,8 +57,8 @@ class TVDatabase {
         });
   }
 
-  public ImmutableSet<EpisodeDetails> getAllEpisodeDetails(int dbId)
-      throws IOException, InterruptedException {
+  public ImmutableSet<EpisodeDetails> getAllEpisodeDetails(int dbId) throws IOException,
+      InterruptedException {
     try {
       return cache.get(dbId);
     } catch (ExecutionException e) {
@@ -72,8 +71,8 @@ class TVDatabase {
     }
   }
 
-  public EpisodeDetails findEpisodeDetails(int dbId, Episode episode)
-      throws IOException, InterruptedException {
+  public EpisodeDetails findEpisodeDetails(int dbId, Episode episode) throws IOException,
+      InterruptedException {
     for (EpisodeDetails details : getAllEpisodeDetails(dbId)) {
       if (details.getEpisode().equals(episode)) {
         return details;
@@ -82,8 +81,8 @@ class TVDatabase {
     return null;
   }
 
-  private ImmutableSet<EpisodeDetails> loadDetails(Integer id)
-      throws IOException, InterruptedException {
+  private ImmutableSet<EpisodeDetails> loadDetails(Integer id) throws IOException,
+      InterruptedException {
     log.info("Looking up TVDatabase information for show id " + id);
 
     // Try to load from filesystem (in case the process was restarted)
@@ -98,20 +97,17 @@ class TVDatabase {
     // Otherwise, download an up to date file. We should really check whether
     // it's modified on the
     // server first.
-    String url = "http://www.thetvdb.com/api/ED0DDA9B6560DD9E/series/" + id
-        + "/all/en.zip";
+    String url = "http://www.thetvdb.com/api/ED0DDA9B6560DD9E/series/" + id + "/all/en.zip";
     downloader.download(url, dbFile);
     return loadFromFile(dbFile);
   }
 
-  private ImmutableSet<EpisodeDetails> loadFromFile(File file)
-      throws IOException {
+  private ImmutableSet<EpisodeDetails> loadFromFile(File file) throws IOException {
     ZipFile zipFile = new ZipFile(file);
     ImmutableSet.Builder<EpisodeDetails> result = ImmutableSet.builder();
     try {
       ZipEntry entry = zipFile.getEntry("en.xml");
-      DocumentBuilder db = DocumentBuilderFactory.newInstance()
-          .newDocumentBuilder();
+      DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       Document doc = db.parse(zipFile.getInputStream(entry));
 
       Node series = doc.getElementsByTagName("Series").item(0);
@@ -127,23 +123,17 @@ class TVDatabase {
             .newBuilder()
             .setDescription(episodeProperties.get("Overview"))
             .setEpisode(
-                Episode
-                    .newBuilder()
-                    .setEpisode(
-                        Integer.parseInt(episodeProperties.get("EpisodeNumber")))
-                    .setSeason(
-                        Integer.parseInt(episodeProperties.get("SeasonNumber"))))
+                Episode.newBuilder()
+                    .setEpisode(Integer.parseInt(episodeProperties.get("EpisodeNumber")))
+                    .setSeason(Integer.parseInt(episodeProperties.get("SeasonNumber"))))
             .setEpisodeName(episodeProperties.get("EpisodeName"))
-            .setGenre(showProperties.get("Genre"))
-            .setNetwork(showProperties.get("Network"))
+            .setGenre(showProperties.get("Genre")).setNetwork(showProperties.get("Network"))
             .setShowName(showProperties.get("SeriesName"))
-            .setArtworkUrl(
-                "http://thetvdb.com/banners/"
-                    + episodeProperties.get("filename")).setAirDate(airDate);
+            .setArtworkUrl("http://thetvdb.com/banners/" + episodeProperties.get("filename"))
+            .setAirDate(airDate);
         if (!Strings.isNullOrEmpty(episodeProperties.get("FirstAired"))) {
           try {
-            DateTime airDateTime = ISODateTimeFormat.dateTime().parseDateTime(
-                airDate);
+            DateTime airDateTime = ISODateTimeFormat.dateTime().parseDateTime(airDate);
             details.setAirDateMillis(airDateTime.getMillis());
           } catch (IllegalArgumentException e) {
             log.severe("Bad date from tv database: " + airDate);

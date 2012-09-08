@@ -94,13 +94,12 @@ public abstract class FreemarkerConfigurationModule extends AbstractModule {
 
   @Provides
   @RequestScoped
-  private ModelProvider provideModelProvider(@Nullable ServeContext context,
-      Injector injector) {
+  private ModelProvider provideModelProvider(@Nullable ServeContext context, Injector injector) {
     if (context == null) {
       return new ModelProvider() {
         @Override
-        public Map<Object, Object> provideModel(String path,
-            Map<String, String[]> parameters) throws Exception {
+        public Map<Object, Object> provideModel(String path, Map<String, String[]> parameters)
+            throws Exception {
           return ImmutableMap.of();
         }
       };
@@ -111,8 +110,7 @@ public abstract class FreemarkerConfigurationModule extends AbstractModule {
   @Provides
   @RequestScoped
   @Nullable
-  private Template provideTemplate(Configuration configuration,
-      @Nullable ServeContext context) {
+  private Template provideTemplate(Configuration configuration, @Nullable ServeContext context) {
     if (context == null) {
       // TODO(bduff): handle no template.
       return null;
@@ -128,8 +126,7 @@ public abstract class FreemarkerConfigurationModule extends AbstractModule {
   ServeContext findContext(String pathInfo) {
     for (ServeContext context : serveContexts) {
       if (context.pattern.endsWith("*")
-          && pathInfo.startsWith(context.pattern.substring(0,
-              context.pattern.length() - 1))) {
+          && pathInfo.startsWith(context.pattern.substring(0, context.pattern.length() - 1))) {
         return context;
       } else if (context.pattern.equals(pathInfo)) {
         return context;

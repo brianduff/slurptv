@@ -17,12 +17,10 @@ public class FrontendModule extends AbstractModule {
     install(new FreemarkerConfigurationModule() {
       @Override
       protected void configureTemplates() {
-        serve("/shows").withDataModel(ShowsModelProvider.class).usingTemplate(
-            "shows.ftl");
+        serve("/shows").withDataModel(ShowsModelProvider.class).usingTemplate("shows.ftl");
       }
     });
-    Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(),
-        Service.class);
+    Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class);
     serviceBinder.addBinding().to(Frontend.class);
   }
 

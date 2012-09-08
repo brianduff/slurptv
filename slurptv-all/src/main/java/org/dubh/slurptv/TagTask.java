@@ -28,8 +28,8 @@ class TagTask extends AbstractTask {
   }
 
   @Override
-  public EpisodeState perform(Show show, EpisodeState previousState)
-      throws TaskFailedException, InterruptedException {
+  public EpisodeState perform(Show show, EpisodeState previousState) throws TaskFailedException,
+      InterruptedException {
     File imageFile = null;
     if (previousState.hasArtFile()) {
       imageFile = new File(previousState.getArtFile());
@@ -59,13 +59,10 @@ class TagTask extends AbstractTask {
         p.add("--TVSeasonNum").add(String.valueOf(episode.getDate().getYear()));
         p.add("--TVEpisodeNum").add(
             episode.getDate().getMonth()
-                + Strings.padStart(String.valueOf(episode.getDate().getDate()),
-                    2, '0'));
+                + Strings.padStart(String.valueOf(episode.getDate().getDate()), 2, '0'));
       } else {
-        p.add("--TVSeasonNum").add(
-            String.valueOf(details.getEpisode().getSeason()));
-        p.add("--TVEpisodeNum").add(
-            String.valueOf(details.getEpisode().getEpisode()));
+        p.add("--TVSeasonNum").add(String.valueOf(details.getEpisode().getSeason()));
+        p.add("--TVEpisodeNum").add(String.valueOf(details.getEpisode().getEpisode()));
       }
       if (details.hasDescription()) {
         p.add("--description").add(details.getDescription());
@@ -90,11 +87,9 @@ class TagTask extends AbstractTask {
       System.out.println("*****************");
       System.out.println(Joiner.on(' ').join(p.build()));
       System.out.println("*****************");
-      executor.execute(p.build(),
-          new File(previousState.getConvertedFile()).getName());
+      executor.execute(p.build(), new File(previousState.getConvertedFile()).getName());
 
-      return EpisodeState.newBuilder(previousState)
-          .setLastCompletedStep(Step.TAGGING).build();
+      return EpisodeState.newBuilder(previousState).setLastCompletedStep(Step.TAGGING).build();
 
     } catch (IOException e) {
       throw new TaskFailedException("Failed to tag", e);
@@ -103,11 +98,11 @@ class TagTask extends AbstractTask {
 
   private EpisodeDetails createFakeDetails(Show show, Episode episode) {
     // Make up some synthetic details. It's the best we can do.
-    EpisodeDetails.Builder detailsBuilder = EpisodeDetails.newBuilder()
-        .setEpisode(episode).setShowName(show.getName());
+    EpisodeDetails.Builder detailsBuilder = EpisodeDetails.newBuilder().setEpisode(episode)
+        .setShowName(show.getName());
     if (episode.hasDate()) {
-      DateTime date = new DateTime(episode.getDate().getYear(), episode
-          .getDate().getMonth(), episode.getDate().getDate(), 0, 0, 0, 0);
+      DateTime date = new DateTime(episode.getDate().getYear(), episode.getDate().getMonth(),
+          episode.getDate().getDate(), 0, 0, 0, 0);
       String dateString = DateTimeFormat.forPattern("EEE MMM dd").print(date);
       detailsBuilder.setEpisodeName(dateString).setAirDate(
           ISODateTimeFormat.basicDateTime().print(date));

@@ -32,8 +32,7 @@ import com.google.inject.Inject;
  * @author brianduff
  */
 public class EasynewsService {
-  private static final Logger log = Logger.getLogger(EasynewsService.class
-      .getName());
+  private static final Logger log = Logger.getLogger(EasynewsService.class.getName());
   private final Credentials credentials;
 
   @Inject
@@ -43,10 +42,8 @@ public class EasynewsService {
 
   public List<Result> findFiles(Query query, Collection<ResultFilter> filters,
       Collection<ResultRanker> rankers) throws IOException {
-    StringBuilder params = new StringBuilder(
-        "http://members.easynews.com/global4/search.html?");
-    params.append("gps="
-        + URLEncoder.encode(query.getSearch(), Charsets.UTF_8.name()));
+    StringBuilder params = new StringBuilder("http://members.easynews.com/global4/search.html?");
+    params.append("gps=" + URLEncoder.encode(query.getSearch(), Charsets.UTF_8.name()));
     params.append("&pby=9999");
     params.append("&sS=5"); // RSS
     log.info("Querying easynews " + params.toString());
@@ -54,8 +51,8 @@ public class EasynewsService {
     Authenticator.setDefault(new Authenticator() {
       @Override
       protected PasswordAuthentication getPasswordAuthentication() {
-        return new PasswordAuthentication(credentials.getUsername(),
-            credentials.getPassword().toCharArray());
+        return new PasswordAuthentication(credentials.getUsername(), credentials.getPassword()
+            .toCharArray());
       }
     });
     HttpURLConnection conn = null;
@@ -84,8 +81,7 @@ public class EasynewsService {
           Node prop = properties.item(j);
           if ("enclosure".equals(prop.getLocalName())) {
             linkUrl = prop.getAttributes().getNamedItem("url").getNodeValue();
-            sizeText = prop.getAttributes().getNamedItem("length")
-                .getNodeValue();
+            sizeText = prop.getAttributes().getNamedItem("length").getNodeValue();
           } else if ("title".equals(prop.getLocalName())) {
             title = prop.getTextContent();
           }
@@ -123,8 +119,7 @@ public class EasynewsService {
     return filtered;
   }
 
-  private List<Result> rank(Collection<ResultRanker> rankers,
-      Set<Result> results) {
+  private List<Result> rank(Collection<ResultRanker> rankers, Set<Result> results) {
     List<ResultAndScore> list = new ArrayList<ResultAndScore>();
     for (Result result : results) {
       ResultAndScore ras = new ResultAndScore();

@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableSet;
  */
 public class PreferEnglishRanker implements ResultRanker {
   // TODO(bduff) move to configuration.
-  private static final ImmutableSet<String> bannedWords = ImmutableSet.of(
-      "sub", "dubbed", "german", "french");
+  private static final ImmutableSet<String> bannedWords = ImmutableSet.of("sub", "dubbed",
+      "german", "french");
 
   @Override
   public long scoreResult(Result result) {

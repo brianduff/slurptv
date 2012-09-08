@@ -16,8 +16,7 @@ import com.google.inject.Inject;
  * state, otherwise, transitions to start looking for it on easynews.
  */
 class CheckWhetherAiredTask extends AbstractTask {
-  private static final Logger log = Logger
-      .getLogger(CheckWhetherAiredTask.class.getName());
+  private static final Logger log = Logger.getLogger(CheckWhetherAiredTask.class.getName());
   private final TVDatabase tvDatabase;
   private final EpisodeLog episodeLog;
 
@@ -28,8 +27,8 @@ class CheckWhetherAiredTask extends AbstractTask {
   }
 
   @Override
-  public EpisodeState perform(Show show, EpisodeState previousState)
-      throws TaskFailedException, InterruptedException {
+  public EpisodeState perform(Show show, EpisodeState previousState) throws TaskFailedException,
+      InterruptedException {
     if (!show.hasTvdbId()) {
       // No tv database id, so we can't check. Just transition to the next
       // state.
@@ -57,8 +56,7 @@ class CheckWhetherAiredTask extends AbstractTask {
         return successState(previousState);
       }
       // Otherwise, the episode hasn't aired yet. Stay in the current state.
-      log.log(episodeLog.info(show, previousState.getEpisode(),
-          "Will not air until " + airDate));
+      log.log(episodeLog.info(show, previousState.getEpisode(), "Will not air until " + airDate));
       return previousState;
     } catch (IOException e) {
       throw new TaskFailedException("Failed to look up tv database", e);
@@ -66,8 +64,8 @@ class CheckWhetherAiredTask extends AbstractTask {
   }
 
   private EpisodeState successState(EpisodeState previousState) {
-    return EpisodeState.newBuilder(previousState)
-        .setLastCompletedStep(Step.CHECKING_WHETHER_AIRED).build();
+    return EpisodeState.newBuilder(previousState).setLastCompletedStep(Step.CHECKING_WHETHER_AIRED)
+        .build();
   }
 
 }

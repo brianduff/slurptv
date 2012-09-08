@@ -12,8 +12,8 @@ import com.google.inject.Singleton;
 @Singleton
 class StatusServlet extends HttpServlet {
   @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+      IOException {
     resp.getWriter().println("OK");
     resp.getWriter().close();
   }
