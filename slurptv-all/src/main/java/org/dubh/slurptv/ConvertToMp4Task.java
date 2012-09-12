@@ -2,7 +2,6 @@ package org.dubh.slurptv;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 import org.dubh.easynews.slurptv.SlurpTv.Configuration;
@@ -83,12 +82,6 @@ class ConvertToMp4Task extends AbstractTask {
             isSuccessful = false;
           }
         }
-      }
-    }
-    
-    boolean isDone() {
-      synchronized (lock) {
-        return isDone;
       }
     }
     
