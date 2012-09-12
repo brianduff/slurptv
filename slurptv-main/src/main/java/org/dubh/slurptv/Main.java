@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.dubh.easynews.slurptv.State.EpisodeState.Step;
+import org.dubh.easynews.slurptv.State.Step;
 import org.dubh.slurptv.easynews.FindDownloadFileTask;
 import org.dubh.slurptv.frontend.FrontendModule;
 

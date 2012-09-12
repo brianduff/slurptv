@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import org.dubh.easynews.slurptv.Data.EpisodeDetails;
 import org.dubh.easynews.slurptv.SlurpTv.Show;
 import org.dubh.easynews.slurptv.State.EpisodeState;
-import org.dubh.easynews.slurptv.State.EpisodeState.Step;
+import org.dubh.easynews.slurptv.State.Step;
 import org.joda.time.DateTime;
 
 import com.google.inject.Inject;

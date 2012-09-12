@@ -6,7 +6,7 @@ import java.util.List;
 import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 import org.dubh.easynews.slurptv.SlurpTv.Show;
 import org.dubh.easynews.slurptv.State.EpisodeState;
-import org.dubh.easynews.slurptv.State.EpisodeState.Step;
+import org.dubh.easynews.slurptv.State.Step;
 import org.dubh.slurptv.AbstractTask;
 import org.dubh.slurptv.TaskFailedException;
 

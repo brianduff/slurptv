@@ -7,7 +7,7 @@ import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 import org.dubh.easynews.slurptv.SlurpTv.Credentials;
 import org.dubh.easynews.slurptv.SlurpTv.Show;
 import org.dubh.easynews.slurptv.State.EpisodeState;
-import org.dubh.easynews.slurptv.State.EpisodeState.Step;
+import org.dubh.easynews.slurptv.State.Step;
 import org.dubh.slurptv.ConfigurationModule.Easynews;
 
 import com.google.inject.Inject;

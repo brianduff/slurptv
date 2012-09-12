@@ -2,20 +2,22 @@ option java_package = "org.dubh.easynews.slurptv";
 
 import "org/dubh/slurptv/data.proto";
 
+enum Step {
+  NOT_STARTED = 1;
+  CHECKING_WHETHER_AIRED = 2;
+  SEARCHING_EASYNEWS = 3;
+  DOWNLOADING = 4;
+  CONVERTING = 5;
+  DOWNLOADING_ART = 6;
+  TAGGING = 7;
+  COPYING_TO_ITUNES = 8;
+  DONE = 9;
+  ANOTHER_STATE = 10;
+}
+
 message EpisodeState {
 	optional Episode episode = 1;
-	enum Step {
-		NOT_STARTED = 1;
-		CHECKING_WHETHER_AIRED = 2;
-		SEARCHING_EASYNEWS = 3;
-		DOWNLOADING = 4;
-		CONVERTING = 5;
-		DOWNLOADING_ART = 6;
-		TAGGING = 7;
-		COPYING_TO_ITUNES = 8;
-		DONE = 9;
-		ANOTHER_STATE = 10;
-	}
+
 	optional Step last_completed_step = 2 [default = NOT_STARTED];
 	optional string url = 3;
 	optional string download_file = 4;
@@ -27,6 +29,12 @@ message EpisodeState {
 	optional int32 retry_count = 10;
 	optional string art_file = 12;
 	optional int64 last_attempt = 13;
-
 }
 
+// Progress completing an operation
+message Progress {
+  optional string description = 1;
+  // The progress (in percent, i.e. 0.0 - 100.0) of completing an operation.
+  // If -1.0, we don't know the progress
+  optional double percent_complete = 2 [default = -1.0];
+}

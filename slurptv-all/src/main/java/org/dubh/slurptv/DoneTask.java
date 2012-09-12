@@ -2,7 +2,7 @@ package org.dubh.slurptv;
 
 import org.dubh.easynews.slurptv.SlurpTv.Show;
 import org.dubh.easynews.slurptv.State.EpisodeState;
-import org.dubh.easynews.slurptv.State.EpisodeState.Step;
+import org.dubh.easynews.slurptv.State.Step;
 
 class DoneTask extends AbstractTask {
   @Override

@@ -14,7 +14,7 @@ import org.dubh.easynews.slurptv.Data.EpisodeDate;
 import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 import org.dubh.easynews.slurptv.SlurpTv.Show;
 import org.dubh.easynews.slurptv.State.EpisodeState;
-import org.dubh.easynews.slurptv.State.EpisodeState.Step;
+import org.dubh.easynews.slurptv.State.Step;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Charsets;

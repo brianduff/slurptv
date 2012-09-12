@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import org.dubh.easynews.slurptv.Data.Episode;
 import org.dubh.easynews.slurptv.SlurpTv.Configuration;
 import org.dubh.easynews.slurptv.SlurpTv.Show;
-import org.dubh.easynews.slurptv.State.EpisodeState.Step;
+import org.dubh.easynews.slurptv.State.Step;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -57,7 +57,7 @@ class TaskExecutor extends AbstractScheduledService {
     log.info("Waiting for " + futures.size() + "tasks...");
     allTasks.get();
   }
-
+  
   @Override
   protected Scheduler scheduler() {
     return Scheduler.newFixedRateSchedule(0, configuration.get().getTimeBetweenExecutions(),
