@@ -48,9 +48,9 @@ class TagTask extends AbstractTask {
       ImmutableList.Builder<String> p = ImmutableList.builder();
       p.add("/Applications/AtomicParsley-MacOSX-0.9.0/AtomicParsley").add(
           previousState.getConvertedFile());
-      if (imageFile != null && imageFile.exists()) {
-        p.add("--artwork").add(imageFile.getPath());
-      }
+      //      if (imageFile != null && imageFile.exists()) {
+      //  p.add("--artwork").add(imageFile.getPath());
+      //}
       p.add("--stik").add("TV Show");
       if (details.hasNetwork()) {
         p.add("--TVNetwork").add(details.getNetwork());

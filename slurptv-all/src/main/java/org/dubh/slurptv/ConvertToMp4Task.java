@@ -39,7 +39,7 @@ class ConvertToMp4Task extends AbstractTask {
     // output to know for sure that it's really done.
     executorFactory.newExecutor("convert").setOutputProcessor(watcher).execute(
         new String[] { HANDBRAKE_CLI, "-i", inputFile.getPath(), "-o", outputFile.getPath(),
-            "-Z", "AppleTV 3" }, inputFile.getName());
+            "-Z", "AppleTV 2" }, inputFile.getName());
     
     if (!watcher.isSuccessful()) {
       throw new IOException("Failed to get successful encode status output from HandbrakeCLI");
